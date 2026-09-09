@@ -1,0 +1,32 @@
+% Minimal unitcalcs example.
+% Build:  pdflatex example  ->  pythontex example  ->  pdflatex example
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[english]{unitcalcs}   % or [german] for decimal comma and German verdicts
+
+\begin{document}
+
+\section{Input values}
+\begin{calc}[left]
+    gamma_G = 1.35      # partial safety factor, permanent (EN 1990)
+    gamma_Q = 1.50      # partial safety factor, variable
+    G_k = 32 kN/m       # characteristic permanent line load
+    Q_k = 18 kN/m       # characteristic variable line load
+\end{calc}
+
+\section{Design value}
+Values defined in an earlier block stay available here.
+\begin{calc}[left]
+    N_Ed = gamma_G*G_k + gamma_Q*Q_k    # design value, EN 1990 (6.10)
+\end{calc}
+
+The number handed to the external software is $N_{Ed} = \py{str(val('N_Ed'))}$.
+
+\section{Verification}
+\begin{calc}[left]
+    N_Rd = 80 kN/m      # design resistance
+    N_Ed <= N_Rd        # verification
+\end{calc}
+
+\end{document}

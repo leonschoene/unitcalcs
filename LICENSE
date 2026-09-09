@@ -1,0 +1,43 @@
+Copyright (C) 2026 Leon Schöne
+
+This work may be distributed and/or modified under the conditions of the
+LaTeX Project Public License, either version 1.3c of this license or (at
+your option) any later version.
+
+The latest version of this license is at:
+
+    https://www.latex-project.org/lppl.txt
+
+and version 1.3c or later is part of all distributions of LaTeX version
+2008 or later.
+
+This work has the LPPL maintenance status `maintained'.
+
+The Current Maintainer of this work is Leon Schöne.
+
+This work consists of the files:
+
+    unitcalcs.sty
+    unitcalcs_tex.py
+    pyproject.toml
+    install.sh
+    clean.sh
+    check_unitcalcs.py
+    example.tex
+    README.md
+
+
+Third-party components
+----------------------
+
+unitcalcs imports, but does not redistribute, the following packages. They
+carry their own licences and are installed separately by pip or by your TeX
+distribution:
+
+    handcalcs      Apache License 2.0
+    forallpeople   Apache License 2.0
+    PythonTeX      LaTeX Project Public License
+    fancyvrb       LaTeX Project Public License
+    amsmath        LaTeX Project Public License
+
+The LPPL is compatible with using these components in this way.

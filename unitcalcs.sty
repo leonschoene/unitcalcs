@@ -1,0 +1,94 @@
+%% unitcalcs.sty -- unit-aware, Calcpad/Mathcad-style worked calculations in LaTeX.
+%%
+%% Copyright (C) 2026 Leon Schoene
+%% https://github.com/leonschoene/unitcalcs
+%%
+%% This work may be distributed and/or modified under the conditions of the LaTeX
+%% Project Public License, either version 1.3c of this license or (at your option)
+%% any later version: https://www.latex-project.org/lppl.txt
+%% This work has the LPPL maintenance status `maintained'.
+%% The Current Maintainer of this work is Leon Schoene.
+%%
+%% Requires PythonTeX + (python) handcalcs & forallpeople, with unitcalcs_tex.py on path.
+%%
+%% Usage -- nothing in the preamble beyond \usepackage{unitcalcs}:
+%%   \begin{calc}          ... \end{calc}   centered (default)
+%%   \begin{calc}[left]    ... \end{calc}
+%%   \begin{calc}[right]   ... \end{calc}
+%%   \begin{calc}[center]  ... \end{calc}
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{unitcalcs}[2026/08/17 v1.1 unit-aware worked calculations]
+%% Language option:  \usepackage[german]{unitcalcs}  or  \usepackage[english]{unitcalcs}
+%%   german  : decimal comma, verdicts "erfuellt" / "nicht erfuellt"
+%%   english : decimal point, verdicts "checked" / "not checked"   (default)
+%% Comma subscripts (R_w,ges) work in every language.
+\newif\ifunitcalcs@german
+\DeclareOption{german}{\unitcalcs@germantrue}
+\DeclareOption{english}{\unitcalcs@germanfalse}
+\ExecuteOptions{english}
+\ProcessOptions\relax
+
+\RequirePackage{amsmath}      % provides 'aligned' -- required
+\RequirePackage{fancyvrb}
+\RequirePackage{pythontex}
+
+%% long calc blocks must be able to split across pages
+%% [4] is passed explicitly: bare \allowdisplaybreaks takes an OPTIONAL argument and
+%% would scan ahead, swallowing a bracket group at the start of the document body.
+\AtBeginDocument{\allowdisplaybreaks[4]%
+  \ifunitcalcs@german\pyc{setlanguagegerman()}\else\pyc{setlanguageenglish()}\fi}
+
+\begin{pythontexcustomcode}{py}
+import sys, os
+sys.path.insert(0, os.getcwd())
+import unitcalcs_tex
+from unitcalcs_tex import (rendercalc, renderbody, emitcalc,
+                            emitcenter, emitleft, emitright, setpytex, val, reset,
+                            setlanguagegerman, setlanguageenglish)
+setpytex(pytex)
+reset()
+\end{pythontexcustomcode}
+
+\newcounter{unitcalcsblock}
+\makeatletter
+\def\unitcalcs@left{left}
+\def\unitcalcs@right{right}
+
+\def\unitcalcs@start{%
+  \VerbatimEnvironment\begin{VerbatimOut}{\jobname-calcblock\arabic{unitcalcsblock}.tmp}}
+
+%% Optional argument next to a verbatim environment needs care: a normal \@ifnextchar
+%% skips spaces while peeking, and the newline after \begin{calc} IS a space token, so
+%% it gets swallowed and fancyvrb then reports "Extraneous input ... between
+%% \begin{calc}[<key=value>] and line end". fancyvrb's own fix (fancyvrb.sty l.93) is to
+%% make ^^M ACTIVE before peeking -- an active ^^M is not a space, so the line end
+%% survives. Catcode 5 is restored in both branches before scanning starts.
+\def\unitcalcs@env{%
+  \catcode`\^^M=\active
+  \@ifnextchar[%
+    {\catcode`\^^M=5 \unitcalcs@opt}%
+    {\catcode`\^^M=5 \def\unitcalcs@use{center}\unitcalcs@start}}
+\def\unitcalcs@opt[#1]{\def\unitcalcs@use{#1}\unitcalcs@start}
+
+%% Python returns a COMPLETE align*/flalign* environment (page-breakable). Each branch
+%% calls a different literal function name, so the alignment never has to travel through
+%% \py{} (which reads its argument verbatim). Only one branch expands, so the Python-side
+%% block counter advances exactly once.
+%% NOTE: emitcalc() has no underscore on purpose -- inside an environment definition the
+%% tokens are fixed at definition time, where '_' would be mangled.
+\newenvironment{calc}%
+  {\unitcalcs@env}%
+  {\end{VerbatimOut}%
+   \ifx\unitcalcs@use\unitcalcs@left
+     \py{emitleft()}%
+   \else\ifx\unitcalcs@use\unitcalcs@right
+     \py{emitright()}%
+   \else
+     \py{emitcenter()}%
+   \fi\fi
+   \stepcounter{unitcalcsblock}}
+\makeatother
+
+%% To print a stored value, call \py DIRECTLY in your document (not via \newcommand):
+%%     $N_{Ed} = \py{str(val('N_Ed'))}$
+\endinput

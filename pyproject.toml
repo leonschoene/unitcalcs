@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "unitcalcs"
+version = "1.0.0"
+description = "Unit-aware, Mathcad/Calcpad-style worked calculations for LaTeX documents"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [{name = "Leon Schoene"}]
+dependencies = ["handcalcs", "forallpeople"]
+
+[project.urls]
+Homepage = "https://github.com/leonschoene/unitcalcs"
+Source = "https://github.com/leonschoene/unitcalcs"
+
+[tool.setuptools]
+py-modules = ["unitcalcs_tex"]

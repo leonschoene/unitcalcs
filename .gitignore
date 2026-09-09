@@ -1,0 +1,45 @@
+# --- unitcalcs / PythonTeX build artefacts -----------------------------------
+pythontex-files-*/
+*.pytxcode
+*-calcblock*.tmp
+calcblock*.tmp
+depythontex*
+
+# --- LaTeX auxiliary files ----------------------------------------------------
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.bbl
+*.blg
+*.nav
+*.snm
+*.vrb
+*.xdv
+
+# Generated PDFs. Remove this line (or use `git add -f`) if you want to commit
+# a rendered example alongside the source.
+*.pdf
+
+# --- Python -------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# --- editors and operating system ---------------------------------------------
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*~
