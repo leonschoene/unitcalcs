@@ -21,7 +21,7 @@ renders as
 Values persist across blocks, so a quantity defined in an early chapter can be used in a
 later one. Under the hood the calculation is executed by
 [handcalcs](https://github.com/connorferster/handcalcs) and
-[forallpeople](https://github.com/connorferster/forallpeople) (big thanks to Connor Ferster for creating these packages), driven from LaTeX by
+[forallpeople](https://github.com/connorferster/forallpeople), driven from LaTeX by
 [PythonTeX](https://github.com/gpoore/pythontex).
 
 ---
@@ -66,12 +66,16 @@ chmod +x install.sh
 ./install.sh
 ```
 
-Or, without cloning, install the Python half directly and copy the style file
-afterwards:
+Or install without cloning. **Two commands** — pip cannot place a LaTeX style file in
+your TeX tree, so the second one does it:
 
 ```sh
 pip install git+https://github.com/leonschoene/unitcalcs.git
+unitcalcs-install-sty
 ```
+
+`unitcalcs-install-sty` copies `unitcalcs.sty` into `TEXMFHOME` and prints where it
+landed. If you skip it, LaTeX reports `File 'unitcalcs.sty' not found`.
 
 ### What the installer does
 
@@ -303,6 +307,7 @@ plain `.tex` with all results substituted, compilable with bare `pdflatex`.
 |---|---|
 | `??` instead of calculations | PythonTeX has not run since the last `pdflatex` |
 | `env: python: No such file or directory` | PythonTeX cannot find an interpreter named `python`; give the full path (see TeXstudio above) |
+| `File 'unitcalcs.sty' not found` | the Python half is installed but the style file is not — run `unitcalcs-install-sty` |
 | `ModuleNotFoundError: unitcalcs_tex` | installed into a different Python than PythonTeX uses |
 | Stale results after editing the engine | delete `pythontex-files-<job>/`, or add `--rerun=always` to the PythonTeX command |
 | A verification prints as a plain requirement | the name on the left is misspelled, so it is treated as a new value |

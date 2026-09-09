@@ -15,5 +15,13 @@ dependencies = ["handcalcs", "forallpeople"]
 Homepage = "https://github.com/leonschoene/unitcalcs"
 Source = "https://github.com/leonschoene/unitcalcs"
 
+[project.scripts]
+unitcalcs-install-sty = "unitcalcs_tex:install_sty_cli"
+
 [tool.setuptools]
 py-modules = ["unitcalcs_tex"]
+
+# ship unitcalcs.sty inside the wheel so `unitcalcs-install-sty` can place it
+# in the TeX tree after a plain `pip install`
+[tool.setuptools.data-files]
+"share/unitcalcs" = ["unitcalcs.sty"]

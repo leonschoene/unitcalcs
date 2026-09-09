@@ -557,3 +557,41 @@ rendercalc = render_calc
 renderbody = render_body
 renderaligned = render_aligned
 setpytex = set_pytex
+
+# --- installing the style file after a plain pip install ----------------------
+def _find_sty():
+    """Locate unitcalcs.sty: shipped with the wheel, or next to this module."""
+    import sys, sysconfig
+    candidates = [
+        os.path.join(sys.prefix, "share", "unitcalcs", "unitcalcs.sty"),
+        os.path.join(sysconfig.get_paths().get("data", sys.prefix),
+                     "share", "unitcalcs", "unitcalcs.sty"),
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "unitcalcs.sty"),
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    raise FileNotFoundError(
+        "unitcalcs.sty not found. Looked in:\n  " + "\n  ".join(candidates))
+
+def install_sty_cli():
+    """Copy unitcalcs.sty into the personal TeX tree (TEXMFHOME).
+
+    pip cannot install a LaTeX style file, so this console script does it:
+
+        unitcalcs-install-sty
+    """
+    import shutil, subprocess
+    src = _find_sty()
+    home = subprocess.run(["kpsewhich", "-var-value", "TEXMFHOME"],
+                          capture_output=True, text=True).stdout.strip()
+    if not home:
+        raise SystemExit("kpsewhich not found - is a TeX distribution installed?")
+    dest_dir = os.path.join(home, "tex", "latex", "unitcalcs")
+    os.makedirs(dest_dir, exist_ok=True)
+    shutil.copy2(src, os.path.join(dest_dir, "unitcalcs.sty"))
+    subprocess.run(["mktexlsr", home], capture_output=True)
+    found = subprocess.run(["kpsewhich", "unitcalcs.sty"],
+                           capture_output=True, text=True, cwd="/").stdout.strip()
+    print(f"installed: {os.path.join(dest_dir, 'unitcalcs.sty')}")
+    print(f"kpsewhich: {found or 'NOT FOUND - check your TeX installation'}")
