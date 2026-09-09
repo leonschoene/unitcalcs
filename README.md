@@ -21,7 +21,7 @@ renders as
 Values persist across blocks, so a quantity defined in an early chapter can be used in a
 later one. Under the hood the calculation is executed by
 [handcalcs](https://github.com/connorferster/handcalcs) and
-[forallpeople](https://github.com/connorferster/forallpeople), driven from LaTeX by
+[forallpeople](https://github.com/connorferster/forallpeople) (big thanks to Connor Ferster for creating these packages), driven from LaTeX by
 [PythonTeX](https://github.com/gpoore/pythontex).
 
 ---
